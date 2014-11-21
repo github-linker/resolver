@@ -11,8 +11,9 @@
 var url = require('url');
 var util = require('util');
 var duoParse = require('duo-parse');
+var giturl = require('giturl');
 
-var isLocalPath = function(val) {
+function isLocalPath(val) {
   if (val === '..') {
     return true;
   }
@@ -23,7 +24,18 @@ var isLocalPath = function(val) {
   }
 
   return false;
-};
+}
+
+function isGitUrl(url) {
+  return url && url.indexOf('git') === 0;
+}
+
+function removeCommitIsh(url) {
+  if (url.indexOf('.git#') === -1) {
+    return url;
+  }
+  return url.split('.git#')[0] + '.git';
+}
 
 function removeTrailingSlash(value) {
   if (value.slice(-1) === '/') {
@@ -43,6 +55,10 @@ module.exports = function(dep, href) {
 
     // resolve local path like ../folder/file.js
     result = url.resolve(href, dep);
+
+  } else if (isGitUrl(dep)) {
+
+    result = giturl.parse(removeCommitIsh(dep));
 
   } else if (gh.user && gh.repo) {
 
