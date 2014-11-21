@@ -100,6 +100,30 @@ describe('resolve', function () {
     });
   });
 
+  // git urls can have diffrent forms see https://www.npmjs.org/doc/files/package.json.html#git-urls-as-dependencies
+  describe('git urls', function () {
+
+    it('git://github.com/user/project.git#commit-ish', function() {
+      resolve('git://github.com/user/project.git#commit-ish').should.equal('https://github.com/user/project');
+    });
+
+    it('git+ssh://user@hostname:project.git#commit-ish', function() {
+      resolve('git+ssh://user@hostn://hostname/project');
+    });
+
+    it('git+ssh://user@hostname/project.git#commit-ish', function() {
+      resolve('git+ssh://user@hostname/project.git#commit-ish').should.equal('http://hostname/project');
+    });
+
+    it('git+http://user@hostname/project/blah.git#commit-ish', function() {
+      resolve('git+http://user@hostname/project/blah.git#commit-ish').should.equal('http://hostname/project/blah');
+    });
+
+    it('git+https://user@hostname/project/blah.git#commit-ish', function() {
+      resolve('git+https://user@hostname/project/blah.git#commit-ish').should.equal('http://hostname/project/blah');
+    });
+  });
+
   describe('shorthand duojs', function () {
 
     it('user/repo@master', function () {
